@@ -24,3 +24,6 @@ desktop.ini
 # Prefect
 .prefect/
 prefect.db
+
+# Pipeline output
+output/
