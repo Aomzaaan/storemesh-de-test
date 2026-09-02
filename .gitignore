@@ -1,0 +1,26 @@
+﻿# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Prefect
+.prefect/
+prefect.db
