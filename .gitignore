@@ -27,3 +27,6 @@ prefect.db
 
 # Pipeline output
 output/
+
+# Pipeline output
+output/
