@@ -1,4 +1,49 @@
----
+# ShopData ETL Pipeline
+
+**Data Engineer Technical Assessment** — Digital Storemesh
+
+An ETL pipeline that extracts raw sales data from SQLite, cleans historical inconsistencies, and loads the results into an analytics database to enable Customer Lifetime Value (CLV) reporting.
+
+## 📋 Prerequisites
+
+- Python 3.12+
+- SQLite 3
+- Prefect 3.x
+- pytest 7.x+
+
+## 🚀 Setup
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+## ▶️ How to Run
+
+### Run the Pipeline
+```bash
+python pipeline.py
+```
+Generates `output/analytics.db` with two tables: `dim_customers` and `fct_orders`.
+
+### Run Unit Tests
+```bash
+pytest tests/ -v
+```
+Runs 16 tests (10 for `clean_phone`, 6 for `_clean_orders_logic`).
+
+### Run SQL Queries
+```bash
+# Data quality exploration
+sqlite3 data/shopdata.db < exploration.sql
+
+# CLV report
+sqlite3 output/analytics.db < clv_report.sql
+```
+
+## 📁 Project Structure
+
+
+
 ## 🔍 Data Quality Findings (Part 1)
 
 After exploring `vw_raw_customers`, `vw_raw_orders`, and `vw_exchange_rates`, I identified **5 distinct data quality issues**:
@@ -28,8 +73,6 @@ After exploring `vw_raw_customers`, `vw_raw_orders`, and `vw_exchange_rates`, I 
 - **Finding:** 6 non-USD orders (EUR, GBP, JPY) lack a matching row in `vw_exchange_rates`
 - **Impact:** Currency conversion would fail without a fallback
 - **Resolution:** Default `rate_to_usd = 1.0` per task specification ("assume already USD if rate missing")
-
----
 
 ## 🏗️ Architecture & Design Decisions
 
@@ -62,8 +105,6 @@ Business rationale: **CLV represents realized revenue**, not intent to purchase.
 
 Placing `AND o.status = 'COMPLETED'` in the **ON clause** (not `WHERE`) preserves LEFT JOIN semantics: customers with zero orders keep `o.status = NULL` after the JOIN and are retained in the result. Placing the filter in `WHERE` would silently convert the LEFT JOIN to an INNER JOIN by discarding those NULL rows.
 
----
-
 ## 🧪 Testing Approach
 
 **16 unit tests** across two transformation functions, all running **independently of the database** via `pytest` fixtures containing dummy DataFrames:
@@ -86,16 +127,12 @@ Uses `pytest.approx()` for floating-point comparisons to handle IEEE 754 precisi
 
 **Run tests:** `pytest tests/ -v`
 
----
-
 ## 📊 CLV Report — Sample Output
 
 Top customer by lifetime value: **Charlie Brown** (id=3, cohort `2023-03`) with **$25,000** from a single order.
 
 - Total customers in report: **10**
 - Customers with no orders: **1** (Hannah Abbott — signed up but never purchased)
-
----
 
 ## 📝 Reviewer Notes
 
@@ -104,13 +141,10 @@ Top customer by lifetime value: **Charlie Brown** (id=3, cohort `2023-03`) with 
   - **SQLite** (`analytics.db`) — primary output
   - **CSV** (`clean_customers.csv`, `clean_orders.csv`) — fallback as specified in the task
 
-
----
-
 ## 👤 Author
 
 **Teeradate Phathun**
-Data Engineer — Digital Storemesh
+Data Engineer— Digital Storemesh
 📧 aomsin.4480@gmail.com
 📱 0922514359
 🐙 GitHub: [Aomzaaan](https://github.com/Aomzaaan)
