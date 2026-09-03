@@ -17,8 +17,6 @@ An ETL pipeline that extracts raw sales data from SQLite, cleans historical inco
 # Install dependencies
 pip install -r requirements.txt
 
-## ▶️ How to Run
-
 ### Run the Pipeline
 ```bash
 python pipeline.py
@@ -40,11 +38,9 @@ sqlite3 data/shopdata.db < exploration.sql
 sqlite3 output/analytics.db < clv_report.sql
 ```
 
-## 📁 Project Structure
+## Project Structure
 
-
-
-## 🔍 Data Quality Findings (Part 1)
+## Data Quality Findings (Part 1)
 
 After exploring `vw_raw_customers`, `vw_raw_orders`, and `vw_exchange_rates`, I identified **5 distinct data quality issues**:
 
@@ -60,7 +56,7 @@ After exploring `vw_raw_customers`, `vw_raw_orders`, and `vw_exchange_rates`, I 
 
 ### Issue 3: Invalid Order Amounts (System Errors)
 - **Finding:** 2 orders with negative `total_amount` (order 103: -50 USD; order 113: -100 EUR)
-- **🔑 Key insight:** Both negative-amount orders have `status = 'SYSTEM_ERROR'`. This correlation reveals a systematic upstream issue rather than isolated data entry errors — future work should investigate the source system.
+- **Key insight:** Both negative-amount orders have `status = 'SYSTEM_ERROR'`. This correlation reveals a systematic upstream issue rather than isolated data entry errors — future work should investigate the source system.
 - **Impact:** Would misrepresent revenue metrics if included
 - **Resolution:** Filter out `total_amount <= 0` during the transform step
 
@@ -74,7 +70,7 @@ After exploring `vw_raw_customers`, `vw_raw_orders`, and `vw_exchange_rates`, I 
 - **Impact:** Currency conversion would fail without a fallback
 - **Resolution:** Default `rate_to_usd = 1.0` per task specification ("assume already USD if rate missing")
 
-## 🏗️ Architecture & Design Decisions
+## Architecture & Design Decisions
 
 ### Why Extract `_clean_orders_logic` from `@task`?
 
@@ -105,7 +101,7 @@ Business rationale: **CLV represents realized revenue**, not intent to purchase.
 
 Placing `AND o.status = 'COMPLETED'` in the **ON clause** (not `WHERE`) preserves LEFT JOIN semantics: customers with zero orders keep `o.status = NULL` after the JOIN and are retained in the result. Placing the filter in `WHERE` would silently convert the LEFT JOIN to an INNER JOIN by discarding those NULL rows.
 
-## 🧪 Testing Approach
+## Testing Approach
 
 **16 unit tests** across two transformation functions, all running **independently of the database** via `pytest` fixtures containing dummy DataFrames:
 
@@ -127,24 +123,25 @@ Uses `pytest.approx()` for floating-point comparisons to handle IEEE 754 precisi
 
 **Run tests:** `pytest tests/ -v`
 
-## 📊 CLV Report — Sample Output
+## CLV Report — Sample Output
 
 Top customer by lifetime value: **Charlie Brown** (id=3, cohort `2023-03`) with **$25,000** from a single order.
 
 - Total customers in report: **10**
 - Customers with no orders: **1** (Hannah Abbott — signed up but never purchased)
 
-## 📝 Reviewer Notes
+## Reviewer Notes
 
 - Pipeline uses SQLite for both source (`data/shopdata.db`) and destination (`output/analytics.db`), matching task specification.
 - Both output formats supported:
   - **SQLite** (`analytics.db`) — primary output
   - **CSV** (`clean_customers.csv`, `clean_orders.csv`) — fallback as specified in the task
 
-## 👤 Author
+## Author
 
 **Teeradate Phathun**
-Data Engineer— Digital Storemesh
-📧 aomsin.4480@gmail.com
-📱 0922514359
-🐙 GitHub: [Aomzaaan](https://github.com/Aomzaaan)
+Data Engineer Applicant — Digital Storemesh
+aomsin.4480@gmail.com
+0922514359
+GitHub: [Aomzaaan](https://github.com/Aomzaaan)
+
