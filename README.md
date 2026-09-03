@@ -4,14 +4,14 @@
 
 An ETL pipeline that extracts raw sales data from SQLite, cleans historical inconsistencies, and loads the results into an analytics database to enable Customer Lifetime Value (CLV) reporting.
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.12+
 - SQLite 3
 - Prefect 3.x
 - pytest 7.x+
 
-## 🚀 Setup
+## Setup
 
 ```bash
 # Install dependencies
