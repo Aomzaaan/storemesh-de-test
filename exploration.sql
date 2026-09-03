@@ -30,7 +30,7 @@ WHERE email IS NULL
 
 
 -- =====================================================
--- Issue 3: INVALID ORDER AMOUNTS
+-- Issue 3: INVALID ORDER AMOUNTS (SYSTEM ERRORS)
 -- =====================================================
 -- Orders with negative total_amount.
 -- Resolution: Filter total_amount > 0 in pipeline.
