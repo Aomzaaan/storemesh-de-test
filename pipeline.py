@@ -114,6 +114,6 @@ def etl_pipeline(
 # ─── Entry point ──────────────────────────
 if __name__ == "__main__":
     etl_pipeline(
-        source_db=r"C:\Users\User\Desktop\storemesh-de-test\data\shopdata_01.db",
+        source_db=r"C:\Users\User\Desktop\storemesh-de-test\data\shopdata.db",
         target_db=r"C:\Users\User\Desktop\storemesh-de-test\output\analytics.db",
     )
