@@ -48,17 +48,8 @@ def clean_customers(df):
     return df
 
 
-@task
-def clean_orders(orders_df, rates_df):
-    logger = get_run_logger()
-    logger.info(f"Cleaning {len(orders_df)} orders")
-
-    # filter
+def _clean_orders_logic(orders_df, rates_df):
     df = orders_df[orders_df["total_amount"] > 0].copy()
-    filtered_count = len(orders_df) - len(df)
-    logger.warning(f"Filtered out {filtered_count} invalid orders (amount <= 0)")
-
-    # currency + rate
     df["currency"] = df["currency"].fillna("USD")
     df = df.merge(
         rates_df,
@@ -68,9 +59,16 @@ def clean_orders(orders_df, rates_df):
     )
     df["rate_to_usd"] = df["rate_to_usd"].fillna(1.0)
     df["usd_amount"] = df["total_amount"] * df["rate_to_usd"]
-
-    logger.info(f"Cleaned orders: {len(df)} valid records")
     return df
+
+
+@task
+def clean_orders(orders_df, rates_df):
+    logger = get_run_logger()
+    logger.info(f"Cleaning {len(orders_df)} orders")
+    result = _clean_orders_logic(orders_df, rates_df)
+    logger.info(f"After cleaning: {len(result)} valid records")
+    return result
 
 
 @task
@@ -86,8 +84,6 @@ def load_data(customers, orders, target_db):
     conn.close()
 
     logger.info(f"Loaded to {target_db}")
-
-    # Test clean_phone standalone
 
 
 @flow(name="shopdata-etl")
